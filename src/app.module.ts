@@ -5,12 +5,15 @@ import { UsersModule } from './users/users.module';
 import { User } from './users/entities/user.entity';
 import { LoginModule } from './login/login.module';
 import { JwtModule } from '@nestjs/jwt';
+import { RevenuModule } from './revenu/revenu.module';
+import { Revenu } from './revenu/entities/revenu.entity';
+import { ExpenseModule } from './expense/expense.module';
+import { AccountModule } from './account/account.module';
 
 @Module({
   imports: [
-    // Charger les variables d'environnement du fichier .env
     ConfigModule.forRoot({
-      isGlobal: true, // Les variables seront accessibles globalement
+      isGlobal: true, 
     }),
 
     JwtModule.register({
@@ -22,17 +25,20 @@ import { JwtModule } from '@nestjs/jwt';
 
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.DB_HOST, // Utilisation de la variable d'environnement
-      port: +process.env.DB_PORT, // Conversion en nombre
+      host: process.env.DB_HOST, 
+      port: +process.env.DB_PORT, 
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [User],
+      entities: [User, Revenu],
       synchronize: true,
     }),
 
     UsersModule,
     LoginModule,
+    RevenuModule,
+    ExpenseModule,
+    AccountModule,
   ],
   controllers: [],
   providers: [],

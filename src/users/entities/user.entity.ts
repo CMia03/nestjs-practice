@@ -1,11 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Revenu } from 'src/revenu/entities/revenu.entity';
 
-@Entity() // Le décorateur indique que cette classe est une entité
+@Entity()
 export class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column() 
+  @Column()
   name: string;
 
   @Column()
@@ -13,4 +14,7 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToMany(() => Revenu, (revenu) => revenu.user)
+  revenus: Revenu[];
 }

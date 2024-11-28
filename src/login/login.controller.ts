@@ -1,7 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UnauthorizedException } from '@nestjs/common';
-import { LoginService } from './login.service';
-import { CreateLoginDto } from './dto/create-login.dto';
-import { UpdateLoginDto } from './dto/update-login.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UnauthorizedException, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
@@ -15,7 +13,7 @@ export class LoginController {
   ) {}
 
   @Post()
-  async login(@Body() createUserDto: CreateUserDto) {
+  async login(@Body() createUserDto: CreateUserDto, @Res() res: Response) {
     const user = await this.usersService.findByEmail(createUserDto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -29,13 +27,20 @@ export class LoginController {
       sub: user.id, 
       email: user.email 
     };
-    
     const token = await this.jwtService.signAsync(payload);
     const { password, ...result } = user;
-    
-    return {
-      ...result,
-      access_token: token
-    };
+
+    try {
+      res.status(200).json({
+        status: true,
+        data: {
+          ...result,
+          access_token: token
+        }
+      
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Merci de verifier vos données' });
+    }
   }
 }
